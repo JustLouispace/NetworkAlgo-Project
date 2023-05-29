@@ -1,0 +1,38 @@
+version: '3'
+services:
+  node1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    networks:
+      - tsp-network
+  node2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5001"
+    networks:
+      - tsp-network
+  node3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5001"
+    networks:
+      - tsp-network
+  node4:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5004:5001"
+    networks:
+      - tsp-network
+
+networks:
+  tsp-network:
+    driver: bridge
