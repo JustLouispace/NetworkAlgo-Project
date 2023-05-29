@@ -13,10 +13,17 @@ public class Main {
     public static void main(String[] args) {
         List<Node> nodes = new ArrayList<>();
         ReentrantLock lock = new ReentrantLock();
-
+    // 10 15 30 25
+        int[][] distances = {
+            {0, 10, 15, 20},
+            {10, 0, 35, 25},
+            {15, 35, 0, 30},
+            {20, 25, 30, 0}
+        };
+    
         for (int i = 0; i < NUM_CITIES; i++) {
             int port = PORTS[i];
-            Node node = new Node(i + 1, port, lock);
+            Node node = new Node(i + 1, port, lock, distances[i]);
             nodes.add(node);
             node.start();
         }
@@ -30,7 +37,7 @@ public class Main {
         }
 
         for(Node node: nodes){
-            node.calculateDistances();
+            node.calculateDistances(distances);
         }
     }
 
@@ -41,14 +48,18 @@ public class Main {
         private boolean isSent;
         private List<String> receivedMessages;
         private ReentrantLock lock;
-
-        public Node(int city, int port, ReentrantLock lock) {
+        private final int[] distances;
+        private List<Integer> path;
+        
+        public Node(int city, int port, ReentrantLock lock, int[] distances) {
             this.city = city;
             this.port = port;
             this.lock = lock;
             this.neighbors = new ArrayList<>();
             this.receivedMessages = new ArrayList<>();
             this.isSent = false;
+            this.distances = distances;
+            this.path = new ArrayList<>();
             for (int i = 0; i < NUM_CITIES; i++) {
                 if (i + 1 != city) {
                     this.neighbors.add("node " + (i + 1));
@@ -111,13 +122,18 @@ public class Main {
             }
         }
 
-        public void calculateDistances() {
-            int distance = city;
+        public void calculateDistances(int[][] distances) {
+            int totalDistance = 0;
+            path.add(city);
             for (String receivedCity : receivedMessages) {
-                distance += Integer.parseInt(receivedCity);
+                int cityIndex = Integer.parseInt(receivedCity) - 1;
+                totalDistance += distances[city-1][cityIndex];
+                path.add(cityIndex + 1);
             }
+            totalDistance += distances[path.get(0) - 1][path.get(path.size()-1) - 1];
             System.out.println(String.format("[Neighbors] Node %d has neighbors: %s", city, neighbors));
-            System.out.println(String.format("[Total Distance] Total distance for node %d: %d\n", city, distance));
+            System.out.println(String.format("[Path] Path for node %d: %s", city, path));
+            System.out.println(String.format("[Total Distance] Total distance for node %d: %d\n", city, totalDistance));
         }
     }
 }
