@@ -13,7 +13,6 @@ public class Main {
     public static void main(String[] args) {
         List<Node> nodes = new ArrayList<>();
         ReentrantLock lock = new ReentrantLock();
-    // 10 15 30 25
         int[][] distances = {
             {0, 10, 15, 20},
             {10, 0, 35, 25},
