@@ -1,12 +1,16 @@
+FROM openjdk:11
+COPY . /app
+WORKDIR /app
+RUN javac Main.java
+CMD ["java", "Main"]
+
+
 version: '3'
 services:
   node1:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      - CITY_ID=1
-      - PORT=5001
     ports:
       - "5001:5001"
     networks:
@@ -15,35 +19,27 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      - CITY_ID=2
-      - PORT=5002
     ports:
-      - "5002:5002"
+      - "5002:5001"
     networks:
       - tsp-network
   node3:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      - CITY_ID=3
-      - PORT=5003
     ports:
-      - "5003:5003"
+      - "5003:5001"
     networks:
       - tsp-network
   node4:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      - CITY_ID=4
-      - PORT=5004
     ports:
-      - "5004:5004"
+      - "5004:5001"
     networks:
       - tsp-network
+
 networks:
   tsp-network:
     driver: bridge
