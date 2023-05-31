@@ -121,19 +121,38 @@ public class Main {
                 e.printStackTrace();
             }
         }
-
         public void calculateDistances(int[][] distances) {
             int totalDistance = 0;
             path.add(city);
-            for (String receivedCity : receivedMessages) {
-                int cityIndex = Integer.parseInt(receivedCity) - 1;
-                totalDistance += distances[city-1][cityIndex];
-                path.add(cityIndex + 1);
+            int currentCity = city;
+            List<Integer> unvisitedCities = new ArrayList<>();
+            for (int i = 0; i < NUM_CITIES; i++) {
+                if (i + 1 != city) {
+                    unvisitedCities.add(i + 1);
+                }
             }
-            totalDistance += distances[path.get(0) - 1][path.get(path.size()-1) - 1];
+            
+            while (!unvisitedCities.isEmpty()) {
+                int nextCity = unvisitedCities.get(0); // Take the first city from the list of unvisited cities
+                int distanceToNextCity = distances[currentCity-1][nextCity-1];
+                totalDistance += distanceToNextCity;
+                System.out.println(String.format("[Step] Distance from city %d to city %d: %d", currentCity, nextCity, distanceToNextCity));
+                System.out.println(String.format("[Step] Cumulative total distance for node %d: %d", city, totalDistance));
+                unvisitedCities.remove(Integer.valueOf(nextCity)); // Remove the visited city from the list
+                currentCity = nextCity;
+                path.add(currentCity);
+            }
+            
+            int distanceToStartCity = distances[currentCity-1][city-1]; // Distance back to the starting city
+            totalDistance += distanceToStartCity;
+            System.out.println(String.format("[Step] Distance from city %d back to city %d: %d", currentCity, city, distanceToStartCity));
+            System.out.println(String.format("[Step] Cumulative total distance for node %d: %d", city, totalDistance));
+            path.add(city); // Add the starting city back to the path
+        
             System.out.println(String.format("[Neighbors] Node %d has neighbors: %s", city, neighbors));
             System.out.println(String.format("[Path] Path for node %d: %s", city, path));
             System.out.println(String.format("[Total Distance] Total distance for node %d: %d\n", city, totalDistance));
         }
+        
     }
 }
